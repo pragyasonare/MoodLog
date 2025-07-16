@@ -1,5 +1,9 @@
+import axios from "axios";
+import { getFCMToken } from "../utils/notifications";
+
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+
 import {
   FiHome,
   FiCalendar,
@@ -15,20 +19,17 @@ import { useState, useEffect } from "react";
 export default function Navbar() {
   const { logout } = useAuth();
   const [showReminderModal, setShowReminderModal] = useState(false);
-  const [reminderTime, setReminderTime] = useState("12:00"); // Default time to ensure button is clickable
+  const [reminderTime, setReminderTime] = useState("12:00"); // Default time
   const [isReminderActive, setIsReminderActive] = useState(false);
   const [permissionStatus, setPermissionStatus] = useState("default");
 
-  ////////////////
   const { token, reminder, setUserReminder, deleteReminder } = useAuth();
 
-  // Load saved reminder
   useEffect(() => {
     const savedTime = localStorage.getItem("moodifyReminder");
     if (savedTime) {
       setReminderTime(savedTime);
       setIsReminderActive(true);
-      scheduleNotification(savedTime); // <== add this line!
     }
 
     // Initialize notification permission state
@@ -37,49 +38,49 @@ export default function Navbar() {
     }
   }, []);
 
-  const scheduleNotification = (time) => {
-    if (!("Notification" in window)) return;
-
-    const [hours, minutes] = time.split(":").map(Number);
-    const now = new Date();
-    const targetTime = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      hours,
-      minutes
-    );
-
-    // If time already passed today, schedule for tomorrow
-    if (targetTime < now) {
-      targetTime.setDate(targetTime.getDate() + 1);
-    }
-
-    const timeout = targetTime - now;
-
-    setTimeout(() => {
-      if (Notification.permission === "granted") {
-        new Notification("Moodify Reminder", {
-          body: "How is your day going? 😊",
-          icon: "/moodify-icon.png",
-        });
-        scheduleNotification(time); // Reschedule for next day
-      }
-    }, timeout);
-  };
-
   const handleSaveReminder = async () => {
     try {
-      if (token) {
+      const permission = await Notification.requestPermission();
+
+      if (permission === "granted") {
+        const fcmToken = await getFCMToken();
+        const authToken = localStorage.getItem("token"); // Your JWT from login
+
+        if (!authToken) {
+          throw new Error("No auth token found. Please log in.");
+        }
+
+        await axios.post(
+          "/api/users/save-push-token",
+          { token: fcmToken },
+          {
+            headers: { Authorization: `Bearer ${authToken}` },
+          }
+        );
+
+        setPermissionStatus(permission);
+      } else {
+        setPermissionStatus(permission);
+        throw new Error("Notifications blocked");
+      }
+
+      // Save reminder time logic
+      if (reminderTime) {
         await setUserReminder(reminderTime);
       } else {
         localStorage.setItem("moodifyReminder", reminderTime);
       }
+
       setIsReminderActive(true);
-      scheduleNotification(reminderTime);
       setShowReminderModal(false);
     } catch (error) {
       console.error("Error setting reminder:", error);
+      if (error.message === "Notifications blocked") {
+        alert("Please enable notifications for reminders to work");
+      }
+      if (error.message.includes("auth")) {
+        alert("You must be logged in to save push tokens.");
+      }
     }
   };
 
@@ -92,7 +93,6 @@ export default function Navbar() {
     setShowReminderModal(false);
   };
 
-  // Update initial state to use context reminder
   useEffect(() => {
     const savedTime = token
       ? reminder
