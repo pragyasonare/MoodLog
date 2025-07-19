@@ -8,7 +8,8 @@ export default function MoodNote({ mood, onUpdate }) {
 
   const handleSave = async () => {
     try {
-      await axios.patch(`http://localhost:5000/api/moods/${mood._id}`, { note });
+      await axios.patch(`https://moodlog.onrender.com/api/moods/${mood._id}
+`, { note });
       onUpdate();
       setIsEditing(false);
     } catch (err) {
