@@ -392,7 +392,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
 
 // ✅ Set base URL globally
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || "https://moodlog.onrender.com";
+axios.defaults.baseURL = "https://moodlog.onrender.com";
 
 // Mood configuration
 const moods = {
