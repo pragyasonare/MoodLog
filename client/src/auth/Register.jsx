@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { register } from "../utils/api";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
 import Toast from "../components/Toast";
 
 const Register = () => {
@@ -10,22 +8,21 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(""); // ✅ Added success state
+  const [success, setSuccess] = useState("");
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
     setError("");
-    setSuccess(""); // Clear previous success message
+    setSuccess("");
 
     if (password.length < 6) {
       setError("Password must be at least 6 characters");
-      setIsLoading(false);
       return;
     }
 
+    setIsLoading(true);
     try {
       const { error } = await register(email, password);
       if (error) {
@@ -34,49 +31,52 @@ const Register = () => {
         setSuccess("Registration successful!");
         setTimeout(() => navigate("/dashboard"), 1500);
       }
-    } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
+    } catch {
+      setError("Something went wrong. Try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-900">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 space-y-6"
+        className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow p-6 space-y-4"
       >
-        <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-white">Register</h1>
+        <h2 className="text-center text-2xl font-bold dark:text-white">Register</h2>
 
-        {error && (
-          <Toast message={error} isError onClose={() => setError("")} />
-        )}
-        {success && (
-          <Toast message={success} isSuccess onClose={() => setSuccess("")} />
-        )}
+        {error && <Toast message={error} isError onClose={() => setError("")} />}
+        {success && <Toast message={success} isSuccess onClose={() => setSuccess("")} />}
 
-        <Input
+        <input
           type="email"
           placeholder="Email"
+          className="w-full p-2 border rounded"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <Input
+        <input
           type="password"
           placeholder="Password"
+          className="w-full p-2 border rounded"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
 
-        <Button type="submit" disabled={isLoading} className="w-full">
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full bg-blue-600 text-white p-2 rounded"
+        >
           {isLoading ? "Registering..." : "Register"}
-        </Button>
+        </button>
       </form>
     </div>
   );
 };
 
 export default Register;
+
