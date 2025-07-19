@@ -185,6 +185,30 @@ export function AuthProvider({ children }) {
     }
   };
 
+
+const setUserReminder = async (time) => {
+  try {
+    const res = await axios.post('/api/moods/reminders', { time });  // Updated endpoint
+    setReminder(time);
+    localStorage.setItem('moodifyReminder', time);
+    return { success: true };
+  } catch (err) {
+    return { error: err.response?.data?.error || 'Failed to set reminder' };
+  }
+};
+
+const deleteReminder = async () => {
+  try {
+    await axios.delete('/api/moods/reminders');  // Updated endpoint
+    setReminder(null);
+    localStorage.removeItem('moodifyReminder');
+  } catch (err) {
+    console.error('Failed to delete reminder:', err);
+  }
+};
+
+
+    
   const register = async (email, password) => {
     try {
       const res = await axios.post('/api/users/register', { email, password }, {
