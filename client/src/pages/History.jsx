@@ -26,7 +26,7 @@ export default function History() {
   useEffect(() => {
     const fetchJournals = async () => {
       try {
-        const res = await axios.get("/api/moods/history", {
+        const res = await axios.get("https://moodlog.onrender.com/api/moods/history", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         setJournals(res.data.filter((m) => m.note)); // Only entries with notes
@@ -48,7 +48,7 @@ export default function History() {
   const handleUpdateJournal = async (id) => {
     try {
       await axios.patch(
-        `/api/moods/${id}`,
+        `https://moodlog.onrender.com/api/moods/${id}`,
         { note: editText },
         {
           headers: {
