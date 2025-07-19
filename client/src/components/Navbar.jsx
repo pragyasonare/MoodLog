@@ -50,13 +50,22 @@ export default function Navbar() {
           throw new Error("No auth token found. Please log in.");
         }
 
+        // await axios.post(
+        //   "https://moodlog.onrender.com/api/users/save-push-token",
+        //   { token: fcmToken },
+        //   {
+        //     headers: { Authorization: `Bearer ${authToken}` },
+        //   }
+        // );
+
         await axios.post(
-          "https://moodlog.onrender.com/api/users/save-push-token",
-          { token: fcmToken },
-          {
-            headers: { Authorization: `Bearer ${authToken}` },
-          }
-        );
+  "https://moodlog.onrender.com/api/users/save-push-token",
+  { pushToken: fcmToken }, // ✅ this must match backend expectation
+  {
+    headers: { Authorization: `Bearer ${authToken}` },
+  }
+);
+
 
         setPermissionStatus(permission);
       } else {
