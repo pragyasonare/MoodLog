@@ -211,55 +211,31 @@ const deleteReminder = async () => {
     
   const register = async (email, password) => {
     try {
-      const res = await axios.post('/api/users/register', { email, password }, {
-        baseURL: API_BASE_URL // Ensure this points to your backend
-      });
-      
+      const res = await axios.post('/api/users/register', { email, password });
       localStorage.setItem('token', res.data.token);
       setToken(res.data.token);
-      
-      // Wait for user data to load before considering registration complete
-      await fetchUser();
-      
       return { success: true };
     } catch (err) {
-      return { 
-        error: err.response?.data?.error || 
-               err.message || 
-               'Registration failed' 
-      };
+      return { error: err.response?.data?.error || 'Registration failed' };
     }
   };
 
   const login = async (email, password) => {
     try {
-      const res = await axios.post('/api/users/login', { email, password }, {
-        baseURL: API_BASE_URL
-      });
-      
+      const res = await axios.post('/api/users/login', { email, password });
       localStorage.setItem('token', res.data.token);
       setToken(res.data.token);
-      
-      // Wait for user data to load before considering login complete
-      await fetchUser();
-      
       return { success: true };
     } catch (err) {
-      console.error('Login error:', err.response?.data || err.message);
-      return { 
-        error: err.response?.data?.error || 
-               err.message || 
-               'Login failed' 
-      };
+      console.error('Login error:', err.response?.data);
+      return { error: err.response?.data?.error || 'Login failed' };
     }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('moodifyReminder');
     setToken(null);
     setUser(null);
-    setReminder(null);
     delete axios.defaults.headers.common['Authorization'];
   };
 
