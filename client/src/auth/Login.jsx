@@ -20,34 +20,41 @@ export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
-    setSuccess("");
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
-      setIsLoading(false);
-      return;
-    }
 
-    try {
-      const { error } = await register(email, password);
-      if (error) {
-        setError(error);
-      } else {
-        setSuccess("Registration successful!");
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 1500); // Give user time to see the toast
-      }
-    } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
-    } finally {
-      setIsLoading(false);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setError("");
+  setSuccess("");
+
+  if (password.length < 6) {
+    setError("Password must be at least 6 characters");
+    setIsLoading(false);
+    return;
+  }
+
+  try {
+    const result = await register(email, password);
+
+    if (result?.error) {
+      setError(result.error);
+    } else {
+      setSuccess("Registration successful!");
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1500);
     }
-  };
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    setError("Registration failed. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+  
+
 
   return (
     <div className="min-h-screen bg-[#141010] flex items-center justify-center p-4">
