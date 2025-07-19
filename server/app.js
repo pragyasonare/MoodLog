@@ -298,12 +298,7 @@ const testJWT = () => {
 };
 
 app.use(cors({
-  origin: [
-    'https://moodlog-frontend.onrender.com', // Production frontend
-    'http://localhost:3000'                  // Local development
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: 'https://moodlog-frontend.onrender.com',
   credentials: true
 }));
 
