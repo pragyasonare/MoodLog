@@ -23,14 +23,14 @@ export default function Reports() {
       setError(null);
       
       const [insightsRes, historyRes] = await Promise.all([
-        axios.get('/api/moods/insights/weekly', {
+        axios.get('https://moodlog.onrender.com/api/moods/insights/weekly', {
           params: { range: timeRange },
           headers: { 
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }),
-        axios.get('/api/moods/history', {
+        axios.get('https://moodlog.onrender.com/api/moods/history', {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -52,7 +52,7 @@ export default function Reports() {
 
   const fetchDateEntries = async (date) => {
     try {
-      const res = await axios.get('/api/moods/entries', {
+      const res = await axios.get('https://moodlog.onrender.com/api/moods/entries', {
         params: { date },
         headers: { 
           Authorization: `Bearer ${token}`,
