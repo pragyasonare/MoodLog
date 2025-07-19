@@ -15,7 +15,7 @@ const MoodCalendar = ({ onCloseEntries }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get('/api/moods/history', {
+        const res = await axios.get('https://moodlog.onrender.com/api/moods/history', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMoodData(res.data);
