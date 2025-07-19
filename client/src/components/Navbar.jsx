@@ -51,7 +51,7 @@ export default function Navbar() {
         }
 
         await axios.post(
-          "/api/users/save-push-token",
+          "https://moodlog.onrender.com/api/users/save-push-token",
           { token: fcmToken },
           {
             headers: { Authorization: `Bearer ${authToken}` },
