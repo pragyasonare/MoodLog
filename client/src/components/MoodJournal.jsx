@@ -6,7 +6,7 @@ export default function MoodJournal({ mood }) {
 
   const handleSave = async () => {
     try {
-      await axios.patch('/api/moods/latest', { note });
+      await axios.patch('https://moodlog.onrender.com/api/moods/latest', { note });
       alert('Journal saved!');
     } catch (err) {
       alert('Failed to save journal entry');
