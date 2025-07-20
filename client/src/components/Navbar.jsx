@@ -46,33 +46,21 @@ export default function Navbar() {
         const fcmToken = await getFCMToken();
         const authToken = localStorage.getItem("token"); // Your JWT from login
 
-        // if (!authToken) {
-        //   throw new Error("No auth token found. Please log in.");
-        // }
-if (!authToken || !fcmToken) {
-  throw new Error("Missing auth or FCM token.");
-}
-
-if (authToken && fcmToken) {
-  await axios.post(
-    "https://moodlog.onrender.com/api/users/save-push-token",
-    { token: fcmToken },
-    {
-      headers: { Authorization: `Bearer ${authToken}` },
-    }
-  );
-}
+        if (!authToken) {
+          throw new Error("No auth token found. Please log in.");
+        }
 
 
 
 
-        // await axios.post(
-        //   "https://moodlog.onrender.com/api/users/save-push-token",
-        //   { token: fcmToken },
-        //   {
-        //     headers: { Authorization: `Bearer ${authToken}` },
-        //   }
-        // );
+
+        await axios.post(
+          "https://moodlog.onrender.com/api/users/save-push-token",
+          { token: fcmToken },
+          {
+            headers: { Authorization: `Bearer ${authToken}` },
+          }
+        );
 
 //         await axios.post(
 //   "https://moodlog.onrender.com/api/users/save-push-token",
